@@ -4,6 +4,7 @@ using Jitter.Models;
 using System.Collections.Generic;
 using Moq;
 using System.Data.Entity;
+using System.Linq;
 
 namespace Jitter.Tests.Models
 {
@@ -37,7 +38,14 @@ namespace Jitter.Tests.Models
             Mock<DbSet<JitterUser>> mock_set = new Mock<DbSet<JitterUser>>();
 
             mock_set.Object.AddRange(expected);
-
+            //allows any data source to be able to be used by linq
+            var data_source = expected.AsQueryable();
+            // convince LINQ that our Mock DbSet is a relational data store
+            //stubbing to make list act like our data store
+            mock_set.As<IQueryable<JitterUser>>().Setup(data => data.Provider).Returns(data_source.Provider);
+            mock_set.As<IQueryable<JitterUser>>().Setup(data => data.Expression).Returns(data_source.Expression);
+            mock_set.As<IQueryable<JitterUser>>().Setup(data => data.ElementType).Returns(data_source.ElementType);
+            mock_set.As<IQueryable<JitterUser>>().Setup(data => data.GetEnumerator()).Returns(data_source.GetEnumerator());
             // This is Stubbing the JitterUsers property getter
             mock_context.Setup(a => a.JitterUsers).Returns(mock_set.Object);
             JitterRepository repository = new JitterRepository(mock_context.Object);
