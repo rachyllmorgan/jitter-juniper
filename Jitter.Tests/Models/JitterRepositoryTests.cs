@@ -64,8 +64,8 @@ namespace Jitter.Tests.Models
             // Arrange
             var expected = new List<JitterUser>
             {
-                new JitterUser {Handle = "adam1" },
-                new JitterUser { Handle = "rumbadancer2"}
+                new JitterUser { Handle = "adam1" },
+                new JitterUser { Handle = "rumbadancer2" }
             };
             mock_set.Object.AddRange(expected);
 
@@ -88,7 +88,142 @@ namespace Jitter.Tests.Models
             // Assert
             Assert.IsInstanceOfType(actual, typeof(JitterContext));
         }
+        [TestMethod]
+        public void JitterRepositoryEnsureICanGetUserByHandle()
+        {
+            var expected = new List<JitterUser>
+            {
+                new JitterUser { Handle = "adam1" },
+                new JitterUser { Handle = "rumbadancer2" }
+            };
+            mock_set.Object.AddRange(expected);
+            ConnectMocksToDataStore(expected);
 
+            string handle = "rumbadancer2";
+            JitterUser actual_user = repository.GetUserByHandle(handle);
 
+            Assert.AreEqual("rumbadancer2", actual_user.Handle);
+        }
+        [TestMethod]
+        public void JitterRepositoryGetUserByHandleUserDoesNotExist()
+        {
+            var expected = new List<JitterUser>
+            {
+                new JitterUser { Handle = "adam1" },
+                new JitterUser { Handle = "rumbadancer2" }
+            };
+            mock_set.Object.AddRange(expected);
+            ConnectMocksToDataStore(expected);
+
+            string handle = "bogus";
+            JitterUser actual_user = repository.GetUserByHandle(handle);
+
+            Assert.IsNull(actual_user);
+        }
+        [ExpectedException(typeof(InvalidOperationException))]
+        [TestMethod]
+        public void JitterRepositoryGetUserByHandlesFailsMultipleUsers()
+        {
+            var expected = new List<JitterUser>
+            {
+                new JitterUser { Handle = "adam1" },
+                new JitterUser { Handle = "adam1" }
+            };
+            mock_set.Object.AddRange(expected);
+            ConnectMocksToDataStore(expected);
+
+            string handle = "adam1";
+            JitterUser actual_user = repository.GetUserByHandle(handle);
+        }
+        [TestMethod]
+        public void JitterRepositoryEnsureHandleIsAvailable()
+        {
+            var expected = new List<JitterUser>
+            {
+                new JitterUser {Handle = "adam1" },
+                new JitterUser { Handle = "rumbadancer2"}
+            };
+            mock_set.Object.AddRange(expected);
+            ConnectMocksToDataStore(expected);
+
+            string handle = "bogus";
+            bool is_available = repository.IsHandleAvailable(handle);
+
+            Assert.IsTrue(is_available);
+        }
+        [TestMethod]
+        public void JitterRepositoryEnsureHandleIsNotAvailable()
+        {
+            var expected = new List<JitterUser>
+            {
+                new JitterUser {Handle = "adam1" },
+                new JitterUser { Handle = "rumbadancer2"}
+            };
+            mock_set.Object.AddRange(expected);
+            ConnectMocksToDataStore(expected);
+
+            string handle = "adam1";
+            bool is_available = repository.IsHandleAvailable(handle);
+
+            Assert.IsFalse(is_available);
+        }
+        [TestMethod]
+        public void JitterRepositoryEnsureHandleIsNotAvailableMultipleUsers()
+        {
+            var expected = new List<JitterUser>
+            {
+                new JitterUser {Handle = "adam1" },
+                new JitterUser { Handle = "adam1"}
+            };
+            mock_set.Object.AddRange(expected);
+            ConnectMocksToDataStore(expected);
+
+            string handle = "adam1";
+            bool is_available = repository.IsHandleAvailable(handle);
+
+            Assert.IsFalse(is_available);
+        }
+        [TestMethod]
+        public void JitterRepositoryEnsureICanSearchByHandle()
+        {
+            var expected = new List<JitterUser>
+            {
+                new JitterUser {Handle = "adam1" },
+                new JitterUser { Handle = "rumbadancer2"},
+                new JitterUser { Handle = "treehugger"},
+                new JitterUser { Handle = "treedancer"}
+            };
+            mock_set.Object.AddRange(expected);
+            ConnectMocksToDataStore(expected);
+
+            string handle = "tree";
+            List<JitterUser> expected_users = new List<JitterUser>
+            {
+                new JitterUser { Handle = "treedancer"},
+                new JitterUser { Handle = "treehugger"}
+            };
+            List<JitterUser> actual_users = repository.SearchByHandle(handle);
+
+            //CollectionAssert doesn't use CompareTo
+            //CollectionAssert.AreEqual(expected_users, actual_users);
+            Assert.AreEqual(expected_users[0].Handle, actual_users[0].Handle);
+            Assert.AreEqual(expected_users[1].Handle, actual_users[1].Handle);
+        }
+        [TestMethod]
+        public void JitterRepositoryEnsureICanSearchByName()
+        {
+            var expected = new List<JitterUser>
+            {
+                new JitterUser {Handle = "adam1" },
+                new JitterUser { Handle = "adam1"}
+            };
+            mock_set.Object.AddRange(expected);
+            ConnectMocksToDataStore(expected);
+
+            string handle = "adam1";
+            bool is_available = repository.IsHandleAvailable(handle);
+
+            Assert.IsFalse(is_available);
+        }
     }
 }
