@@ -10,6 +10,7 @@ namespace Jitter.Models
     {
         // IDbSet, IQueryable
         public virtual DbSet<JitterUser> JitterUsers { get; set; }
-        public DbSet<Jot> Jots { get; set; }
+        // Adding virtual allows us to mock it
+        public virtual DbSet<Jot> Jots { get; set; }
     }
 }
