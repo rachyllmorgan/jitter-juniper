@@ -8,9 +8,18 @@
 
 <p>Use this area to provide additional information.</p>
 
+@*one way to pull data using model at top of view*@
 <ul>
     @foreach (var item in Model)
     {
     <li>@item</li>
+    }
+</ul>
+
+@*another way using ViewBag from HomeController in About method*@
+<ul>
+    @foreach (var item in ViewBag.someData)
+    {
+        <li>@item</li>
     }
 </ul>
