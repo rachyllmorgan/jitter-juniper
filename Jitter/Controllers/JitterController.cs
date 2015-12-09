@@ -45,17 +45,15 @@ namespace Jitter.Controllers
             JitterUser me = Repo.GetAllUsers().Where(u => u.RealUser.Id == userId).Single();
             */
 
-            string user_id = User.Identity.GetUserId();
             /* V2
             string user_id = User.Identity.GetUserId();
             ApplicationUser real_user = Repo.Context.Users.FirstOrDefault(u => u.Id == user_id);
             JitterUser me = Repo.GetAllUsers().Where(u => real_user.Id == u.RealUser.Id).Single();
             */
 
-
             /* V3 */
+            string user_id = User.Identity.GetUserId();
             JitterUser me = Repo.GetAllUsers().Where(u => u.RealUser.Id == user_id).Single();
-            
             List<Jot> list_of_jots = Repo.GetUserJots(me);
             return View(list_of_jots);
         }
