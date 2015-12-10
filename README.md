@@ -1,5 +1,7 @@
 # Jitter
 
+NSS Class Project with ASP.NET MVC 5/C#/AngularJS
+
 ## Key Vocabulary
 
 * Jot - Editable. 141 characters max. Like a Tweet but better.
